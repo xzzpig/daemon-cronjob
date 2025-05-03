@@ -1,0 +1,67 @@
+apiVersion: scheduling.xzzpig.com/v1
+kind: DaemonCronJob
+metadata:
+  labels:
+    app.kubernetes.io/name: daemon-cronjob-example
+    app.kubernetes.io/instance: daemoncronjob-sample
+    app.kubernetes.io/part-of: daemon-cronjob
+    app.kubernetes.io/created-by: daemon-cronjob
+  name: daemoncronjob-sample
+spec:
+  # Run every 5 minutes
+  schedule: "*/5 * * * *"
+  # Keep 3 successful job history records
+  successfulJobsHistoryLimit: 3
+  # Keep 1 failed job history record
+  failedJobsHistoryLimit: 1
+  # Concurrency policy: Replace
+  concurrencyPolicy: Replace
+  # Starting deadline seconds
+  startingDeadlineSeconds: 60
+  # Job template
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: node-status
+            image: busybox:1.35
+            command:
+            - /bin/sh
+            - -c
+            - |
+              echo "============================================"
+              echo "Node status check started at $(date)"
+              echo "Hostname: $(hostname)"
+              echo "Node resource status:"
+              echo "CPU usage: $(top -bn1 | grep 'Cpu(s)' | awk '{print $2 + $4}')%"
+              echo "Memory usage:"
+              free -m | grep -v +
+              echo "Disk usage:"
+              df -h | grep -v tmpfs
+              echo "Node status check completed at $(date)"
+              echo "============================================"
+            resources:
+              requests:
+                cpu: 100m
+                memory: 100Mi
+              limits:
+                cpu: 200m
+                memory: 200Mi
+          restartPolicy: OnFailure
+          # Select nodes to run on (optional)
+          nodeSelector:
+            kubernetes.io/os: linux  # Only run on Linux nodes
+          # Add tolerations to schedule on tainted nodes (optional)
+          tolerations:
+          - key: node-role.kubernetes.io/control-plane
+            operator: Exists
+            effect: NoSchedule
+          # Node affinity (optional) 
+          # affinity:
+          #   nodeAffinity:
+          #     requiredDuringSchedulingIgnoredDuringExecution:
+          #       nodeSelectorTerms:
+          #       - matchExpressions:
+          #         - key: node-role.kubernetes.io/control-plane
+          #           operator: DoesNotExist

@@ -1,0 +1,74 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "daemon-cronjob.fullname" . }}-manager-role
+  labels:
+  {{- include "daemon-cronjob.labels" . | nindent 4 }}
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+- apiGroups:
+  - ""
+  resources:
+  - nodes
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - batch
+  resources:
+  - cronjobs
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+- apiGroups:
+  - scheduling.xzzpig.com
+  resources:
+  - daemoncronjobs
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - scheduling.xzzpig.com
+  resources:
+  - daemoncronjobs/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - scheduling.xzzpig.com
+  resources:
+  - daemoncronjobs/status
+  verbs:
+  - get
+  - patch
+  - update
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "daemon-cronjob.fullname" . }}-manager-rolebinding
+  labels:
+  {{- include "daemon-cronjob.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: '{{ include "daemon-cronjob.fullname" . }}-manager-role'
+subjects:
+- kind: ServiceAccount
+  name: '{{ include "daemon-cronjob.fullname" . }}-controller-manager'
+  namespace: '{{ .Release.Namespace }}'

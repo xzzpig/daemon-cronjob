@@ -1,0 +1,19 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "daemon-cronjob.fullname" . }}-daemoncronjob-admin-role
+  labels:
+  {{- include "daemon-cronjob.labels" . | nindent 4 }}
+rules:
+- apiGroups:
+  - scheduling.xzzpig.com
+  resources:
+  - daemoncronjobs
+  verbs:
+  - '*'
+- apiGroups:
+  - scheduling.xzzpig.com
+  resources:
+  - daemoncronjobs/status
+  verbs:
+  - get

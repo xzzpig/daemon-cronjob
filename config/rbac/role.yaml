@@ -1,0 +1,58 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: manager-role
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+- apiGroups:
+  - ""
+  resources:
+  - nodes
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - batch
+  resources:
+  - cronjobs
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+- apiGroups:
+  - scheduling.xzzpig.com
+  resources:
+  - daemoncronjobs
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - scheduling.xzzpig.com
+  resources:
+  - daemoncronjobs/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - scheduling.xzzpig.com
+  resources:
+  - daemoncronjobs/status
+  verbs:
+  - get
+  - patch
+  - update
