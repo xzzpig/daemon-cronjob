@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  daemon-cronjob:
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2025-05-03T16:05:42.450651303Z"
+    description: A Helm chart for Kubernetes DaemonCronJob
+    digest: 9676c29c55988696d2d36c18156b0f44e59a1ef16e36d03cd7ac9d8ecbc0ae47
+    name: daemon-cronjob
+    type: application
+    urls:
+    - https://github.com/xzzpig/daemon-cronjob/releases/download/daemon-cronjob-0.1.1/daemon-cronjob-0.1.1.tgz
+    version: 0.1.1
+generated: "2025-05-03T16:05:42.450660821Z"
